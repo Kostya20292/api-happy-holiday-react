@@ -2,7 +2,6 @@
 const { readFileSync } = require("fs");
 const { createServer } = require("http");
 
-
 // файл для базы данных
 const DB_TEXT = process.env.DB_TEXT || "./db_text.json";
 const DB_IMG = process.env.DB_IMG || "./db_img.json";
@@ -42,8 +41,8 @@ function getHolidayImg(cat) {
   const img = arrayRandElement(imageObj[cat]);
   return {
     idImg: img.slice(0, -4),
-    urlImg: `http://localhost:3000/img/${img}`,
-  }
+    urlImg: `https://api-happy-holiday-react.onrender.com/img/${img}`,
+  };
 }
 
 function getRandomItem(cat) {
@@ -93,15 +92,14 @@ function getImgId(itemId) {
   if (!img) throw new ApiError(404, { message: "Item Not Found" });
   return {
     idImg: img.slice(0, -4),
-    urlImg: `http://localhost:${PORT}/img/${img}`,
-  }
+    urlImg: `https://api-happy-holiday-react.onrender.com/img/${img}`,
+  };
 }
 
 // создаём HTTP сервер, переданная функция будет реагировать на все запросы к нему
 module.exports = server = createServer(async (req, res) => {
-
   // req - объект с информацией о запросе, res - объект для управления отправляемым ответом
-  if  (req.url.includes('img')) {
+  if (req.url.includes("img")) {
     res.statusCode = 200;
     res.setHeader("Content-Type", "image/jpeg");
     require("fs").readFile(`.${req.url}`, (err, image) => {
@@ -151,14 +149,18 @@ module.exports = server = createServer(async (req, res) => {
         return getList();
       }
 
-      const holiday = Object.keys(getList()).find((item) => item === uri.substring(1));
+      const holiday = Object.keys(getList()).find(
+        (item) => item === uri.substring(1)
+      );
 
       if (holiday) {
         return getRandomItem(holiday);
       }
 
       if (uri.includes("/text/")) {
-        const holiday = Object.keys(getList()).find((item) => item === uri.substring(6));
+        const holiday = Object.keys(getList()).find(
+          (item) => item === uri.substring(6)
+        );
         if (holiday) {
           return getHolidayText(holiday);
         } else {
@@ -168,7 +170,9 @@ module.exports = server = createServer(async (req, res) => {
       }
 
       if (uri.includes("/image/")) {
-        const holiday = Object.keys(getList()).find((item) => item === uri.substring(7));
+        const holiday = Object.keys(getList()).find(
+          (item) => item === uri.substring(7)
+        );
         if (holiday) {
           return getHolidayImg(holiday);
         } else {
